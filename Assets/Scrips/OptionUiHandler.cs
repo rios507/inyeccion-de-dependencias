@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ using Zenject;
 public class OptionUiHandler : MonoBehaviour
 {
     [Inject] AudioManager audioManager;
+    [Inject] DisplaySettingsManager displayManager;
+
     [SerializeField] Slider masterSlider;
     [SerializeField] Slider musicSlider;
     [SerializeField] Slider sfxSlider; 
@@ -15,13 +18,30 @@ public class OptionUiHandler : MonoBehaviour
 
     [SerializeField] TMP_Dropdown resolutionsDropdown;
 
+    [SerializeField] TMP_Dropdown qualityDropdown;
+
+    public void LoadQualityDropdown()
+    {
+
+
+        qualityDropdown.AddOptions(displayManager.GetQualityNames());
+
+        qualityDropdown.value = displayManager.GetQualityLevel();
+
+        qualityDropdown.onValueChanged.AddListener(delegate
+        {
+            displayManager.SetQualityLevel(qualityDropdown.value);
+        });
+
+    }
+
     public void LoadResolutionsDropdown()
     {
         List<string> options = new();
 
-        for (int i = 0; i < Screen.resolutions.Length; i++)
+        for (int i = 0; i < displayManager.GetResolutions().Length; i++)
         {
-            Resolution resolution = Screen.resolutions[i];
+            Resolution resolution = displayManager.GetResolutions()[i];
             string format = resolution.width + "X" + resolution.height + "-" + resolution.refreshRateRatio.value.ToString("F0") + "Hz";
             options.Add(format);
         }
@@ -30,7 +50,7 @@ public class OptionUiHandler : MonoBehaviour
 
         resolutionsDropdown.onValueChanged.AddListener(delegate
         {
-
+            displayManager.SetResolution(resolutionsDropdown.value);
         });
     }
     
@@ -39,12 +59,15 @@ public class OptionUiHandler : MonoBehaviour
         LoadResolutionsDropdown();
         LoadFullscreenToggle();
         LoadSlider();
+        LoadQualityDropdown();
     }
     public void LoadFullscreenToggle()
     {
+        fullscreentoggle.isOn = displayManager.IsFullScreen();
+
         fullscreentoggle.onValueChanged.AddListener(delegate
         {
-            Screen.fullScreen = fullscreentoggle.isOn;
+            displayManager.SetFullScreen(fullscreentoggle.isOn);
         });
     }
     public void LoadSlider()
