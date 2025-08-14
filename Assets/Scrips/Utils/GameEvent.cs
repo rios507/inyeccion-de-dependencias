@@ -7,5 +7,7 @@ public static class GameEvent
     public const string ResumeGame = "GameResume";
     public const string FinishGame = "GameFinished";
     public const string RestartGame = "GameRestarted";
+
+    public const string ChangePanel = "ChangePanel";
     
 }
