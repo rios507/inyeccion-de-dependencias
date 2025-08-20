@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class UIManager : MonoBehaviour
 {
+    [Inject] DiContainer container;
     [SerializeField] UIDataBaseScriptable uiDatabase;
 
     Dictionary<UIPanelEnum, IUIPanel> panels = new();
@@ -26,10 +28,10 @@ public class UIManager : MonoBehaviour
         if (!panels.ContainsKey(panelEnum))
         {
             UIPanelData data = uiDatabase.GetpanelDataByEnum(panelEnum);
-            GameObject PanelGO = Instantiate(data.Prefab);
-
+            GameObject PanelGO = container.InstantiatePrefab(data.Prefab);
             if (PanelGO.TryGetComponent(out BaseUIPanel panel))
             {
+                panel.Initialize();
                 panels.Add(panelEnum, panel);
             }
         }
@@ -40,8 +42,11 @@ public class UIManager : MonoBehaviour
             AnimatorStateInfo info = lastPanel.Anim.GetCurrentAnimatorStateInfo(0);
             
             yield return new WaitForSeconds(info.length);
+            lastPanel.Anim.gameObject.SetActive(false);
         }
 
+        panels[panelEnum].Anim.gameObject.SetActive(true);
         panels[panelEnum].Show();
+        lastPanel = panels[panelEnum];
     }
 }

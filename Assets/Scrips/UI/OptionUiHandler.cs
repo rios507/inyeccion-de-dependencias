@@ -1,14 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class OptionUiHandler : MonoBehaviour
+public class OptionUiHandler : BaseUIPanel
 {
+    [Inject] UIManager uiManager;
     [Inject] AudioManager audioManager;
     [Inject] DisplaySettingsManager displayManager;
+
+    [SerializeField] Button backButtom;
 
     [SerializeField] Slider masterSlider;
     [SerializeField] Slider musicSlider;
@@ -20,13 +24,23 @@ public class OptionUiHandler : MonoBehaviour
 
     [SerializeField] TMP_Dropdown qualityDropdown;
 
+    public override void Show()
+    {
+        base.Show();
+
+        fullscreentoggle.isOn = displayManager.IsFullScreen();
+        qualityDropdown.value = displayManager.GetQualityLevel();
+        sfxSlider.value = audioManager.SfxVolume;
+        masterSlider.value = audioManager.MasterVolume;
+        musicSlider.value = audioManager.MusicVolume;
+    }
     public void LoadQualityDropdown()
     {
 
 
         qualityDropdown.AddOptions(displayManager.GetQualityNames());
 
-        qualityDropdown.value = displayManager.GetQualityLevel();
+
 
         qualityDropdown.onValueChanged.AddListener(delegate
         {
@@ -54,8 +68,13 @@ public class OptionUiHandler : MonoBehaviour
         });
     }
     
-    void Start()
+    public override void Initialize()
     {
+        backButtom.onClick.AddListener(delegate
+        {
+            uiManager.ShowPanel(UIPanelEnum.MainMenu);
+        });
+        base.Initialize();
         LoadResolutionsDropdown();
         LoadFullscreenToggle();
         LoadSlider();
@@ -63,7 +82,7 @@ public class OptionUiHandler : MonoBehaviour
     }
     public void LoadFullscreenToggle()
     {
-        fullscreentoggle.isOn = displayManager.IsFullScreen();
+
 
         fullscreentoggle.onValueChanged.AddListener(delegate
         {
@@ -72,14 +91,14 @@ public class OptionUiHandler : MonoBehaviour
     }
     public void LoadSlider()
     {
-        masterSlider.value = audioManager.MasterVolume;
+
 
         masterSlider.onValueChanged.AddListener(delegate
         {
             audioManager.SetMasterVolume(masterSlider.value);
         });
 
-        musicSlider.value = audioManager.MusicVolume;
+
 
         musicSlider.onValueChanged.AddListener(delegate
         {
@@ -87,7 +106,7 @@ public class OptionUiHandler : MonoBehaviour
         });
 
 
-        sfxSlider.value = audioManager.SfxVolume;
+
 
 
         sfxSlider.onValueChanged.AddListener(delegate

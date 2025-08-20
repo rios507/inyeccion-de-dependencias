@@ -4,7 +4,7 @@ public enum UIPanelEnum
 {
     MainMenu,
     GameOver,
-    Settings,
+    options,
     Credits,
     Hud,
     Pause

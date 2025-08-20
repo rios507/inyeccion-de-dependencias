@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panels:
   - _panelEnum: 0
-    _prefab: {fileID: 0}
+    _prefab: {fileID: 7491573335632561297, guid: 541cd9ab96f7f794eba9305f7b19cdd2, type: 3}
   - _panelEnum: 1
     _prefab: {fileID: 0}
   - _panelEnum: 2
