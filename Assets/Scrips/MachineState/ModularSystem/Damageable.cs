@@ -2,7 +2,23 @@ using UnityEngine;
 
 public class Damageable : MonoBehaviour
 {
-    HealthSystem healthSystem;
+    [SerializeField] targetTypeEnum targetTypeEnum;
+    [SerializeField] HealthSystem healthSystem;
+    private void Awake()
+    {
+        if (healthSystem == null)
+        {
+            TryGetComponent(out healthSystem);
+        }
+    }
+    private void OnEnable()
+    {
+        healthSystem.Death += () => Destroy(this);
+    }
+    private void OnDisable()
+    {
+        healthSystem.Death -= () => Destroy(this);
+    }
     public void Initialize(HealthSystem healthSystem)
     {
         this.healthSystem = healthSystem;
@@ -10,5 +26,9 @@ public class Damageable : MonoBehaviour
     public void RecieveDamage(float damage)
     {
        healthSystem.SetHealth(healthSystem.GetHealth() - damage);
+    }
+    public targetTypeEnum GetTargetType()
+    {
+        return targetTypeEnum;
     }
 }
